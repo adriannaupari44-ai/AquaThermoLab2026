@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaThermoLab 2026 · Termorregulación y Recuperación Acuática (Lima)</title>
+  <!-- Tailwind CSS via CDN para diseño responsivo y utilidades -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Iconografía Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Tipografías Google Fonts: Inter y JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Enlace a la hoja de estilos externa -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="min-h-screen selection:bg-sky-500/30 selection:text-sky-200">
+
+  <!-- ENCABEZADO INSTITUCIONAL -->
+  <header class="sticky top-0 z-30 bg-[#060D1A]/95 backdrop-blur-md border-b border-slate-800/90">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-3.5">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <!-- Identidad del Proyecto -->
+        <div class="flex items-start sm:items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-slate-950 shadow-lg shadow-sky-500/20 shrink-0">
+            <i data-lucide="waves" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white">
+                AQUATHERMOLAB <span class="text-sky-400">2026</span>
+              </h1>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-500/15 text-sky-300 border border-sky-400/30">
+                <i data-lucide="map-pin" class="w-3 h-3"></i> Lima · San Juan de Lurigancho
+              </span>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
+                ODS 3 · Meta 3.4
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Variabilidad térmica del agua y capacidad de recuperación en nadadores de piscinas climatizadas · Ciencias del Deporte
+            </p>
+          </div>
+        </div>
+
+        <!-- Selector de Escenarios Preconfigurados -->
+        <div class="flex flex-wrap items-center gap-1.5 bg-[#0B162C] p-1.5 rounded-xl border border-slate-800" id="scenario-buttons">
+          <button data-scenario="estable" class="scenario-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/70">
+            Condición Térmica Estable
+          </button>
+          <button data-scenario="moderada" class="scenario-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-sky-500 text-slate-950 shadow-sm">
+            Fluctuación Moderada (SJL)
+          </button>
+          <button data-scenario="critica" class="scenario-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/70">
+            Inestabilidad Térmica Crítica
+          </button>
+          <span id="custom-badge" class="hidden px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">
+            Modo Personalizado
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+
+      <!-- PANEL IZQUIERDO: 10 CONTROLES EN TIEMPO REAL -->
+      <aside class="xl:col-span-4 bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-2xl">
+        <div class="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-sky-400"></i>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-white">Parámetros de Entrada</h2>
+          </div>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider uppercase bg-sky-500/15 text-sky-300 border border-sky-400/30">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Dato Ingresado (Campo)
+          </span>
+        </div>
+
+        <!-- V1: VARIABILIDAD TÉRMICA -->
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-400">V1 · Variabilidad Térmica del Agua</span>
+            <span class="text-[11px] text-slate-400 font-mono-num">5 indicadores</span>
+          </div>
+          <div class="space-y-2.5" id="sliders-v1">
+            <!-- Slider 1: T Inicial -->
+            <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3 transition-all">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-xs font-medium text-slate-200 flex items-center gap-1.5">
+                  <i data-lucide="thermometer" class="w-3.5 h-3.5 text-sky-400"></i> Temperatura inicial del agua
+                </span>
+                <span id="val-tInitial" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded-md bg-[#0B162C] border border-sky-500/30 text-sky-300">27.6 °C</span>
+              </div>
+              <input type="range" id="input-tInitial" class="aqua-slider" min="24.0" max="31.0" step="0.1" value="27.6" />
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                <span>24.0°C</span><span class="text-slate-400 font-sans">Inicio sesión</span><span>31.0°C</span>
+              </div>
+            </div>
+
+            <!-- Slider 2: T Durante -->
+            <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3 transition-all">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-xs font-medium text-slate-200 flex items-center gap-1.5">
+                  <i data-lucide="waves" class="w-3.5 h-3.5 text-emerald-400"></i> Temperatura durante entrenamiento
+                </span>
+                <span id="val-tDuring" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded-md bg-[#0B162C] border border-emerald-500/30 text-emerald-300">26.8 °C</span>
+              </div>
+              <input type="range" id="input-tDuring" class="aqua-slider" min="24.0" max="31.0" step="0.1" value="26.8" />
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                <span>24.0°C</span><span class="text-slate-400 font-sans">Carga principal</span><span>31.0°C</span>
+              </div>
+            </div>
+
+            <!-- Slider 3: T Final -->
+            <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3 transition-all">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-xs font-medium text-slate-200 flex items-center gap-1.5">
+                  <i data-lucide="thermometer" class="w-3.5 h-3.5 text-amber-400"></i> Temperatura final del agua
+                </span>
+                <span id="val-tFinal" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded-md bg-[#0B162C] border border-amber-500/30 text-amber-300">26.2 °C</span>
+              </div>
+              <input type="range" id="input-tFinal" class="aqua-slider" min="24.0" max="31.0" step="0.1" value="26.2" />
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                <span>24.0°C</span><span class="text-slate-400 font-sans">Cierre sesión</span><span>31.0°C</span>
+              </div>
+            </div>
+
+            <!-- Sliders 4 y 5: T Min y T Max -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-2.5">
+              <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3">
+                <div class="flex items-center justify-between gap-1 mb-1.5">
+                  <span class="text-xs font-medium text-slate-200 flex items-center gap-1">
+                    <i data-lucide="snowflake" class="w-3.5 h-3.5 text-sky-400"></i> T° mínima
+                  </span>
+                  <span id="val-tMin" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded bg-[#0B162C] border border-sky-500/30 text-sky-300">26.0 °C</span>
+                </div>
+                <input type="range" id="input-tMin" class="aqua-slider" min="23.0" max="30.0" step="0.1" value="26.0" />
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                  <span>23.0°C</span><span>30.0°C</span>
+                </div>
+              </div>
+
+              <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3">
+                <div class="flex items-center justify-between gap-1 mb-1.5">
+                  <span class="text-xs font-medium text-slate-200 flex items-center gap-1">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 text-rose-400"></i> T° máxima
+                  </span>
+                  <span id="val-tMax" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded bg-[#0B162C] border border-rose-500/30 text-rose-300">27.7 °C</span>
+                </div>
+                <input type="range" id="input-tMax" class="aqua-slider" min="25.0" max="32.0" step="0.1" value="27.7" />
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                  <span>25.0°C</span><span>32.0°C</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- V2: CARGA Y RESPUESTA DEL NADADOR -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-xs font-bold uppercase tracking-wider text-sky-400">V2 · Carga y Respuesta del Nadador</span>
+            <span class="text-[11px] text-slate-400 font-mono-num">5 indicadores</span>
+          </div>
+          <div class="space-y-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-2.5">
+              <!-- Duración -->
+              <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3">
+                <div class="flex items-center justify-between gap-1 mb-1.5">
+                  <span class="text-xs font-medium text-slate-200 flex items-center gap-1">
+                    <i data-lucide="timer" class="w-3.5 h-3.5 text-sky-400"></i> Duración
+                  </span>
+                  <span id="val-duration" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded bg-[#0B162C] border border-sky-500/30 text-sky-300">90 min</span>
+                </div>
+                <input type="range" id="input-duration" class="aqua-slider" min="30" max="150" step="5" value="90" />
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                  <span>30m</span><span>150m</span>
+                </div>
+              </div>
+
+              <!-- Tiempo recuperación -->
+              <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3">
+                <div class="flex items-center justify-between gap-1 mb-1.5">
+                  <span class="text-xs font-medium text-slate-200 flex items-center gap-1">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-emerald-400"></i> Recuperación
+                  </span>
+                  <span id="val-recoveryTime" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded bg-[#0B162C] border border-emerald-500/30 text-emerald-300">20 min</span>
+                </div>
+                <input type="range" id="input-recoveryTime" class="aqua-slider" min="5" max="60" step="5" value="20" />
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                  <span>5m</span><span>60m</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Frecuencia cardíaca -->
+            <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-xs font-medium text-slate-200 flex items-center gap-1.5">
+                  <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i> Frecuencia cardíaca post-esfuerzo
+                </span>
+                <span id="val-hrPost" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded-md bg-[#0B162C] border border-rose-500/30 text-rose-300">168 lpm</span>
+              </div>
+              <input type="range" id="input-hrPost" class="aqua-slider" min="110" max="195" step="1" value="168" />
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                <span>110 lpm</span><span class="text-slate-400 font-sans">Pulso al finalizar</span><span>195 lpm</span>
+              </div>
+            </div>
+
+            <!-- RPE e Intensidad -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-2.5">
+              <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3">
+                <div class="flex items-center justify-between gap-1 mb-1.5">
+                  <span class="text-xs font-medium text-slate-200 flex items-center gap-1">
+                    <i data-lucide="brain" class="w-3.5 h-3.5 text-amber-400"></i> Fatiga (RPE)
+                  </span>
+                  <span id="val-rpe" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded bg-[#0B162C] border border-amber-500/30 text-amber-300">7 /10</span>
+                </div>
+                <input type="range" id="input-rpe" class="aqua-slider" min="1" max="10" step="1" value="7" />
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                  <span>1/10</span><span>10/10</span>
+                </div>
+              </div>
+
+              <div class="bg-[#060D1A]/80 border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-3">
+                <div class="flex items-center justify-between gap-1 mb-1.5">
+                  <span class="text-xs font-medium text-slate-200 flex items-center gap-1">
+                    <i data-lucide="activity" class="w-3.5 h-3.5 text-sky-400"></i> Intensidad
+                  </span>
+                  <span id="val-intensity" class="font-mono-num text-xs font-bold px-2 py-0.5 rounded bg-[#0B162C] border border-sky-500/30 text-sky-300">7 /10</span>
+                </div>
+                <input type="range" id="input-intensity" class="aqua-slider" min="1" max="10" step="1" value="7" />
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono-num mt-1">
+                  <span>1/10</span><span>10/10</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ÁREA DERECHA: VISUALIZACIÓN CIENTÍFICA Y MODELADO -->
+      <section class="xl:col-span-8 space-y-6">
+
+        <!-- BANNER DE CONTEXTO + NAVEGACIÓN DE PESTAÑAS -->
+        <div class="bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="thermal-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border bg-emerald-500/15 text-emerald-300 border-emerald-400/30">
+                Rango Termoneutro Acuático
+              </span>
+              <span class="text-xs font-mono-num text-slate-400">
+                Escenario: <strong id="scenario-title" class="text-white">Fluctuación Moderada (SJL)</strong>
+              </span>
+            </div>
+            <p id="scenario-desc" class="text-xs text-slate-300 leading-relaxed">
+              Descenso térmico gradual por intercambio ambiental nocturno/matutino y alta afluencia de usuarios en San Juan de Lurigancho.
+            </p>
+          </div>
+
+          <!-- Pestañas -->
+          <div class="flex items-center gap-1 bg-[#060D1A] p-1 rounded-xl border border-slate-800 shrink-0">
+            <button data-tab="simulacion" class="tab-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all bg-sky-500 text-slate-950 shadow">
+              <i data-lucide="layers" class="w-3.5 h-3.5"></i> Simulación & Fórmulas
+            </button>
+            <button data-tab="comparativa" class="tab-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white">
+              <i data-lucide="scale" class="w-3.5 h-3.5"></i> Estable vs. Inestable
+            </button>
+            <button data-tab="evidencia" class="tab-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white">
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Marco & Evidencia
+            </button>
+          </div>
+        </div>
+
+        <!-- VISTA 1: SIMULACIÓN, PISCINA, GRÁFICO Y 4 DIMENSIONES -->
+        <div id="view-simulacion" class="space-y-6">
+
+          <!-- 1. PISCINA CLIMATIZADA INTERACTIVA -->
+          <div class="bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                  <i data-lucide="waves" class="w-4 h-4 text-sky-400"></i>
+                  <span>Simulación Espacial de Piscina Climatizada (<span id="pool-length-label">25m</span>)</span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  Distribución longitudinal de sensores térmicos (Cabecera → Zona Central → Retorno)
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-sky-500/15 text-sky-300 border border-sky-400/30">
+                  <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Dato Ingresado (Campo)
+                </span>
+                <div class="inline-flex rounded-lg bg-[#060D1A] p-0.5 border border-slate-800">
+                  <button data-pool="25m" class="pool-len-btn px-2.5 py-1 text-xs font-semibold rounded-md bg-sky-500 text-slate-950 shadow">25m</button>
+                  <button data-pool="50m" class="pool-len-btn px-2.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-white">50m</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SVG Piscina -->
+            <div class="relative w-full overflow-hidden rounded-xl border border-sky-500/25 bg-[#060D1A] p-2 sm:p-3">
+              <svg viewBox="0 0 800 250" class="w-full h-auto block select-none">
+                <defs>
+                  <linearGradient id="poolThermalGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop id="grad-stop-1" offset="0%" stop-color="#0D9488" stop-opacity="0.85" />
+                    <stop id="grad-stop-2" offset="50%" stop-color="#0EA5E9" stop-opacity="0.85" />
+                    <stop id="grad-stop-3" offset="100%" stop-color="#0284C7" stop-opacity="0.85" />
+                  </linearGradient>
+                  <pattern id="waterRipples" width="60" height="30" patternUnits="userSpaceOnUse">
+                    <path d="M0 15 Q 15 8, 30 15 T 60 15" fill="none" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.16" />
+                  </pattern>
+                </defs>
+
+                <!-- Andén perimetral -->
+                <rect x="10" y="12" width="780" height="226" rx="14" fill="#0F1E3A" stroke="#1E3A5F" stroke-width="2" />
+                <!-- Vaso de agua -->
+                <rect x="36" y="28" width="728" height="194" rx="8" fill="url(#poolThermalGradient)" />
+                <rect x="36" y="28" width="728" height="194" rx="8" fill="url(#waterRipples)" />
+
+                <!-- Marcas de referencia -->
+                <line x1="110" y1="28" x2="110" y2="222" stroke="#FFFFFF" stroke-opacity="0.25" stroke-dasharray="4 4" />
+                <line x1="400" y1="28" x2="400" y2="222" stroke="#FFFFFF" stroke-opacity="0.35" stroke-dasharray="6 4" />
+                <line x1="690" y1="28" x2="690" y2="222" stroke="#FFFFFF" stroke-opacity="0.25" stroke-dasharray="4 4" />
+
+                <!-- Corcheras -->
+                <line x1="38" y1="60" x2="762" y2="60" stroke="#E0F2FE" stroke-width="2.5" stroke-dasharray="10 5" stroke-opacity="0.65" />
+                <line x1="38" y1="92" x2="762" y2="92" stroke="#E0F2FE" stroke-width="2.5" stroke-dasharray="10 5" stroke-opacity="0.65" />
+                <line x1="38" y1="124" x2="762" y2="124" stroke="#E0F2FE" stroke-width="2.5" stroke-dasharray="10 5" stroke-opacity="0.65" />
+                <line x1="38" y1="156" x2="762" y2="156" stroke="#E0F2FE" stroke-width="2.5" stroke-dasharray="10 5" stroke-opacity="0.65" />
+                <line x1="38" y1="188" x2="762" y2="188" stroke="#E0F2FE" stroke-width="2.5" stroke-dasharray="10 5" stroke-opacity="0.65" />
+
+                <!-- Bloques de salida -->
+                <rect x="20" y="38" width="14" height="12" rx="2" fill="#CBD5E1" />
+                <rect x="20" y="70" width="14" height="12" rx="2" fill="#CBD5E1" />
+                <rect x="20" y="102" width="14" height="12" rx="2" fill="#CBD5E1" />
+                <rect x="20" y="134" width="14" height="12" rx="2" fill="#CBD5E1" />
+                <rect x="20" y="166" width="14" height="12" rx="2" fill="#CBD5E1" />
+                <rect x="20" y="198" width="14" height="12" rx="2" fill="#CBD5E1" />
+
+                <!-- Etiquetas distancia -->
+                <text x="46" y="214" fill="#FFFFFF" font-size="10" font-family="monospace" opacity="0.85">0m (Cabecera)</text>
+                <text id="svg-mid-dist" x="378" y="214" fill="#FFFFFF" font-size="10" font-family="monospace" opacity="0.85">12.5m</text>
+                <text id="svg-end-dist" x="692" y="214" fill="#FFFFFF" font-size="10" font-family="monospace" opacity="0.85">25m (Viraje)</text>
+
+                <!-- Sensor 1: Inicial -->
+                <g transform="translate(125, 110)">
+                  <rect x="-64" y="-36" width="128" height="58" rx="8" fill="#060D1A" fill-opacity="0.92" stroke="#38BDF8" stroke-width="1.5" />
+                  <circle cx="0" cy="34" r="6" fill="#38BDF8" />
+                  <circle cx="0" cy="34" r="10" fill="none" stroke="#38BDF8" stroke-width="1.5" class="sensor-pulse" />
+                  <text x="0" y="-18" text-anchor="middle" fill="#94A3B8" font-size="9.5" font-weight="bold">SENSOR 1 · INICIAL</text>
+                  <text id="svg-tInitial" x="0" y="3" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="bold" font-family="monospace">27.6 °C</text>
+                  <text x="0" y="16" text-anchor="middle" fill="#38BDF8" font-size="8.5">t = 0 min</text>
+                </g>
+
+                <!-- Sensor 2: Durante -->
+                <g transform="translate(400, 110)">
+                  <rect x="-68" y="-36" width="136" height="58" rx="8" fill="#060D1A" fill-opacity="0.92" stroke="#10B981" stroke-width="1.5" />
+                  <circle cx="0" cy="34" r="6" fill="#10B981" />
+                  <circle cx="0" cy="34" r="10" fill="none" stroke="#10B981" stroke-width="1.5" class="sensor-pulse" />
+                  <text x="0" y="-18" text-anchor="middle" fill="#94A3B8" font-size="9.5" font-weight="bold">SENSOR 2 · INTRA-SESIÓN</text>
+                  <text id="svg-tDuring" x="0" y="3" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="bold" font-family="monospace">26.8 °C</text>
+                  <text id="svg-tDuring-min" x="0" y="16" text-anchor="middle" fill="#10B981" font-size="8.5">t = 45 min</text>
+                </g>
+
+                <!-- Sensor 3: Final -->
+                <g transform="translate(675, 110)">
+                  <rect x="-64" y="-36" width="128" height="58" rx="8" fill="#060D1A" fill-opacity="0.92" stroke="#F59E0B" stroke-width="1.5" />
+                  <circle cx="0" cy="34" r="6" fill="#F59E0B" />
+                  <circle cx="0" cy="34" r="10" fill="none" stroke="#F59E0B" stroke-width="1.5" class="sensor-pulse" />
+                  <text x="0" y="-18" text-anchor="middle" fill="#94A3B8" font-size="9.5" font-weight="bold">SENSOR 3 · FINAL</text>
+                  <text id="svg-tFinal" x="0" y="3" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="bold" font-family="monospace">26.2 °C</text>
+                  <text id="svg-tFinal-min" x="0" y="16" text-anchor="middle" fill="#F59E0B" font-size="8.5">t = 90 min</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Resumen inferior de piscina -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-3">
+              <div class="bg-[#060D1A] border border-slate-800/90 rounded-lg px-3 py-2">
+                <span class="text-[11px] text-slate-400 block">Media Térmica Sesión</span>
+                <span id="stat-meanTemp" class="text-sm font-bold font-mono-num text-white">26.87 °C</span>
+              </div>
+              <div class="bg-[#060D1A] border border-slate-800/90 rounded-lg px-3 py-2">
+                <span class="text-[11px] text-slate-400 block">Rango Extremo (Mín-Máx)</span>
+                <span id="stat-rangeTemp" class="text-sm font-bold font-mono-num text-sky-300">26.0 – 27.7 °C</span>
+              </div>
+              <div class="bg-[#060D1A] border border-slate-800/90 rounded-lg px-3 py-2">
+                <span class="text-[11px] text-slate-400 block">Desviación vs 27.0°C</span>
+                <span id="stat-devNeutral" class="text-sm font-bold font-mono-num text-slate-200">±0.13 °C</span>
+              </div>
+              <div class="bg-[#060D1A] border border-slate-800/90 rounded-lg px-3 py-2">
+                <span class="text-[11px] text-slate-400 block">Clasificación Térmica</span>
+                <span id="stat-thermalClass" class="text-xs font-semibold text-emerald-300 truncate block mt-0.5">Rango Termoneutro</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. GRÁFICO DE VARIACIÓN TÉRMICA + FÓRMULAS TRANSPARENTES -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Gráfico SVG -->
+            <div class="lg:col-span-7 bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                  <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-sky-400"></i>
+                    Curva de Variación Térmica y Amplitud (ΔT)
+                  </h3>
+                  <p class="text-xs text-slate-400 mt-0.5">Evolución temporal del agua frente a la banda extrema registrada</p>
+                </div>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-sky-500/15 text-sky-300 border border-sky-400/30">
+                  <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Dato Ingresado (Campo)
+                </span>
+              </div>
+
+              <div class="relative bg-[#060D1A] border border-slate-800/90 rounded-xl p-2">
+                <svg id="thermal-chart-svg" viewBox="0 0 680 240" class="w-full h-auto block overflow-visible"></svg>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-4 mt-3 text-[11px] text-slate-400">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-3 h-2 rounded-sm bg-sky-400/20 border border-sky-400/60 inline-block"></span>
+                  Amplitud térmica registrada (<span id="legend-amp">1.70</span> °C)
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <span class="w-3 h-2 rounded-sm bg-emerald-400/20 inline-block"></span>
+                  Franja termoneutra referencial (26.5 – 28.0 °C)
+                </span>
+              </div>
+            </div>
+
+            <!-- Panel de Fórmulas Transparentes -->
+            <div class="lg:col-span-5 bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-xl">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                    <i data-lucide="calculator" class="w-4 h-4 text-sky-400"></i>
+                    Fórmulas Métricas (V1)
+                  </h3>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-sky-500/15 text-sky-300 border border-sky-400/30">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Dato Ingresado
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-3">Cálculo determinista directo a partir de los registros térmicos ingresados:</p>
+
+                <div class="space-y-2.5">
+                  <!-- F1 -->
+                  <div class="bg-[#060D1A] border border-slate-800 rounded-xl p-3">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-semibold text-slate-200">1. Amplitud Térmica (ΔT_amp)</span>
+                      <span id="formula-amp-val" class="font-mono-num text-sm font-bold text-sky-400">1.70 °C</span>
+                    </div>
+                    <div id="formula-amp-eq" class="text-[11px] font-mono-num text-slate-400 mt-1">
+                      T_máx − T_mín = 27.7 − 26.0
+                    </div>
+                  </div>
+
+                  <!-- F2 -->
+                  <div class="bg-[#060D1A] border border-slate-800 rounded-xl p-3">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-semibold text-slate-200">2. Cambio Térmico Neto (ΔT_neto)</span>
+                      <span id="formula-net-val" class="font-mono-num text-sm font-bold text-sky-300">-1.40 °C</span>
+                    </div>
+                    <div id="formula-net-eq" class="text-[11px] font-mono-num text-slate-400 mt-1">
+                      T_final − T_inicial = 26.2 − 27.6
+                    </div>
+                  </div>
+
+                  <!-- F3 -->
+                  <div class="bg-[#060D1A] border border-slate-800 rounded-xl p-3">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-semibold text-slate-200">3. Velocidad Media Cambio (v_T)</span>
+                      <span id="formula-rate-val" class="font-mono-num text-sm font-bold text-white">-0.93 °C/h</span>
+                    </div>
+                    <div id="formula-rate-eq" class="text-[11px] font-mono-num text-slate-400 mt-1">
+                      ΔT / Δt = -1.40°C / 90m (-0.0156 °C/min)
+                    </div>
+                  </div>
+
+                  <!-- F4 -->
+                  <div class="bg-[#060D1A] border border-slate-800 rounded-xl p-3">
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-xs font-semibold text-slate-200">4. Índice de Estabilidad Térmica</span>
+                      <span id="formula-stab-val" class="font-mono-num text-sm font-bold text-emerald-400">55%</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div id="formula-stab-bar" class="h-full rounded-full transition-all duration-300 bg-amber-400" style="width: 55%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. PANEL DE LAS 4 DIMENSIONES DE CAPACIDAD DE RECUPERACIÓN (V2) -->
+          <div class="bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-800">
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <i data-lucide="activity" class="w-5 h-5 text-sky-400"></i>
+                  Variable 2: Capacidad de Recuperación (4 Dimensiones)
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  Respuestas estimadas según la interacción entre variabilidad térmica del agua y carga interna del nadador
+                </p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">
+                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span> Estimación Modelada
+                </span>
+                <div class="bg-[#060D1A] border border-sky-500/30 rounded-xl px-3.5 py-2 text-right">
+                  <span class="text-[10px] uppercase tracking-wider text-slate-400 block">Índice Global Estimado</span>
+                  <span id="overall-recovery-score" class="text-lg font-extrabold font-mono-num text-sky-400">61 / 100</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Dimensión 1: Fisiológica -->
+              <div class="bg-[#060D1A] border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-4 transition-all">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                      <i data-lucide="heart" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-bold text-white">1. Recuperación Fisiológica</h4>
+                      <span class="text-[11px] text-slate-400">Termorregulación y dinámica autonómica</span>
+                    </div>
+                  </div>
+                  <span id="score-phys" class="font-mono-num text-base font-extrabold text-white">63%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden my-3">
+                  <div id="bar-phys" class="h-full bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full transition-all duration-300" style="width: 63%"></div>
+                </div>
+                <div class="grid grid-cols-4 gap-1.5 bg-[#0B162C] p-2.5 rounded-lg border border-slate-800 mb-2.5 text-center">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">FC Post (Real)</span>
+                    <span id="hr-post-disp" class="text-xs font-bold font-mono-num text-rose-400">168</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">FC 1 min*</span>
+                    <span id="hr-1m-disp" class="text-xs font-bold font-mono-num text-sky-300">145</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">FC 3 min*</span>
+                    <span id="hr-3m-disp" class="text-xs font-bold font-mono-num text-sky-300">130</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">FC 5 min*</span>
+                    <span id="hr-5m-disp" class="text-xs font-bold font-mono-num text-emerald-300">120</span>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  Descenso estimado en 1er min: <strong id="hrr-1m-text" class="text-white">-23 lpm</strong>. Las fluctuaciones térmicas modulan el tono vasomotor cutáneo y el retorno venoso (Markey et al., 2026; Carter et al., 2024; Ntoumani et al., 2023).
+                </p>
+              </div>
+
+              <!-- Dimensión 2: Muscular -->
+              <div class="bg-[#060D1A] border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-4 transition-all">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                      <i data-lucide="dumbbell" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-bold text-white">2. Recuperación Muscular</h4>
+                      <span class="text-[11px] text-slate-400">Perfusión tisular y evolución de molestias</span>
+                    </div>
+                  </div>
+                  <span id="score-musc" class="font-mono-num text-base font-extrabold text-white">62%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden my-3">
+                  <div id="bar-musc" class="h-full bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full transition-all duration-300" style="width: 62%"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 bg-[#0B162C] p-2.5 rounded-lg border border-slate-800 mb-2.5">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Molestia Muscular Est. (24h)</span>
+                    <span id="doms-disp" class="text-xs font-bold font-mono-num text-amber-300">4.1 / 10 pts</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Ventana Post-Sesión</span>
+                    <span id="rec-window-disp" class="text-xs font-bold font-mono-num text-emerald-300">20 min</span>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  Una amplitud de <strong id="musc-amp-text" class="text-white">1.7 °C</strong> incide en la vasoconstricción periférica y aclaramiento metabólico local, asociándose con la evolución de molestias musculares (Zhang et al., 2022; Choo et al., 2022).
+                </p>
+              </div>
+
+              <!-- Dimensión 3: Energética -->
+              <div class="bg-[#060D1A] border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-4 transition-all">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                      <i data-lucide="zap" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-bold text-white">3. Recuperación Energética</h4>
+                      <span class="text-[11px] text-slate-400">Resíntesis de glucógeno y gasto termogénico</span>
+                    </div>
+                  </div>
+                  <span id="score-ener" class="font-mono-num text-base font-extrabold text-white">63%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden my-3">
+                  <div id="bar-ener" class="h-full bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full transition-all duration-300" style="width: 63%"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 bg-[#0B162C] p-2.5 rounded-lg border border-slate-800 mb-2.5">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Tasa Resíntesis Estimada</span>
+                    <span id="glycogen-disp" class="text-xs font-bold font-mono-num text-emerald-300">~4.1 mmol/kg/h</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Exposición Acuática Total</span>
+                    <span id="exposure-disp" class="text-xs font-bold font-mono-num text-sky-300">90 min (7/10 int.)</span>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  El descenso térmico obliga a incrementar la termogénesis metabólica para sostener la temperatura central, compitiendo con la reposición de glucógeno entre sesiones (Craven et al., 2021; Markey et al., 2026).
+                </p>
+              </div>
+
+              <!-- Dimensión 4: Perceptiva -->
+              <div class="bg-[#060D1A] border border-slate-800/90 hover:border-sky-500/40 rounded-xl p-4 transition-all">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                      <i data-lucide="brain" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-bold text-white">4. Recuperación Perceptiva</h4>
+                      <span class="text-[11px] text-slate-400">Confort térmico, fatiga y disposición mental</span>
+                    </div>
+                  </div>
+                  <span id="score-perc" class="font-mono-num text-base font-extrabold text-white">55%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden my-3">
+                  <div id="bar-perc" class="h-full bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full transition-all duration-300" style="width: 55%"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 bg-[#0B162C] p-2.5 rounded-lg border border-slate-800 mb-2.5">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">RPE Reportado (Real)</span>
+                    <span id="rpe-disp" class="text-xs font-bold font-mono-num text-amber-300">7 / 10 (Borg CR10)</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Disposición Siguiente Sesión</span>
+                    <span id="readiness-disp" class="text-xs font-bold font-mono-num text-sky-300">Moderada</span>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  La incomodidad por cambios bruscos de temperatura amplifica la percepción subjetiva de esfuerzo y fatiga residual en nadadores jóvenes y competitivos (Batista et al., 2024; Sorgente et al., 2023).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA 2: COMPARACIÓN ESTABLE VS INESTABLE -->
+        <div id="view-comparativa" class="hidden bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="scale" class="w-5 h-5 text-sky-400"></i>
+                Contraste Experimental: Condición Estable vs. Condición Simulada Actual
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Comparación cuantitativa entre el patrón termoneutro estable y los parámetros actuales en evaluación</p>
+            </div>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-indigo-500/20 text-indigo-200 border border-indigo-400/30">
+              Estimación Modelada
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                  <th class="py-3 px-3">Dimensión / Indicador</th>
+                  <th class="py-3 px-3 text-emerald-300">Referencia Estable</th>
+                  <th class="py-3 px-3 text-sky-300">Escenario Actual</th>
+                  <th class="py-3 px-3 text-right">Brecha (Δ)</th>
+                </tr>
+              </thead>
+              <tbody id="comparison-tbody" class="divide-y divide-slate-800/80 text-xs"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- VISTA 3: MARCO CIENTÍFICO Y BIBLIOGRAFÍA -->
+        <div id="view-evidencia" class="hidden bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-5">
+          <div class="border-b border-slate-800 pb-4">
+            <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="book-open" class="w-5 h-5 text-sky-400"></i>
+              Fundamentación Científica y Alcance Metodológico (Lima 2026)
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">
+              Alineado al Objetivo de Desarrollo Sostenible 3 (Salud y Bienestar · Meta 3.4) en piscinas climatizadas de San Juan de Lurigancho.
+            </p>
+          </div>
+
+          <div class="bg-sky-500/10 border border-sky-400/30 rounded-xl p-4 flex items-start gap-3">
+            <i data-lucide="shield-check" class="w-5 h-5 text-sky-400 shrink-0 mt-0.5"></i>
+            <div class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
+              <p class="font-bold text-white">Nota Metodológica sobre Causalidad vs. Asociación Fisiológica:</p>
+              <p>
+                Los indicadores proyectados en este simulador representan <strong>asociaciones fisiológicas y termorreguladoras documentadas en la literatura de las Ciencias del Deporte</strong>. Una temperatura específica del agua no garantiza por sí sola una recuperación determinada, ni debe asumirse que el agua fría produce sistemáticamente mejores resultados en todos los perfiles de nadadores. Asimismo, la capacidad de recuperación se analiza de forma diferenciada respecto al rendimiento competitivo inmediato.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="references-grid"></div>
+        </div>
+
+        <!-- TABLERO INFERIOR DE SÍNTESIS INTERPRETATIVA -->
+        <div class="bg-[#0B162C] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="info" class="w-4 h-4 text-sky-400"></i>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Síntesis Interpretativa de la Simulación</h3>
+          </div>
+          <p id="synthesis-text" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Calculando análisis termorregulador en tiempo real...
+          </p>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- LÓGICA CIENTÍFICA Y MOTOR INTERACTIVO EN JAVASCRIPT -->
+  <script>
+    const PRESET_SCENARIOS = {
+      estable: {
+        name: 'Condición Térmica Estable',
+        description: 'Sistema de climatización con control PID continuo. Variación mínima (< 0.4 °C) acorde a estándares competitivos.',
+        params: { tInitial: 27.2, tDuring: 27.3, tFinal: 27.2, tMin: 27.0, tMax: 27.4, duration: 90, recoveryTime: 25, hrPost: 158, rpe: 6, intensity: 7 }
+      },
+      moderada: {
+        name: 'Fluctuación Moderada (SJL)',
+        description: 'Descenso térmico gradual por intercambio ambiental nocturno/matutino y alta afluencia de usuarios en San Juan de Lurigancho.',
+        params: { tInitial: 27.6, tDuring: 26.8, tFinal: 26.2, tMin: 26.0, tMax: 27.7, duration: 90, recoveryTime: 20, hrPost: 168, rpe: 7, intensity: 7 }
+      },
+      critica: {
+        name: 'Inestabilidad Térmica Crítica',
+        description: 'Falla intermitente en intercambiadores de calor o choque térmico abrupto durante bloques de entrenamiento.',
+        params: { tInitial: 28.4, tDuring: 26.1, tFinal: 24.9, tMin: 24.7, tMax: 28.6, duration: 105, recoveryTime: 15, hrPost: 178, rpe: 9, intensity: 8 }
+      }
+    };
+
+    const SCIENTIFIC_REFERENCES = [
+      { authors: 'Markey et al.', year: '2026', topic: 'Respuestas termorreguladoras en natación', summary: 'Analiza el balance entre producción metabólica de calor y disipación conductiva/convectiva según la temperatura del agua en nadadores.' },
+      { authors: 'Carter et al.', year: '2024', topic: 'Temperatura del agua durante el ejercicio acuático', summary: 'Evalúa el impacto del gradiente térmico agua-piel sobre la respuesta cardiovascular y la economía de nado.' },
+      { authors: 'Batista et al.', year: '2024', topic: 'Recuperación y percepción de fatiga en nadadores adolescentes', summary: 'Documenta la relación entre la carga interna percibida (RPE), el confort térmico y la disposición subjetiva entre sesiones.' },
+      { authors: 'Ntoumani et al.', year: '2023', topic: 'Termorregulación durante la inmersión acuática', summary: 'Describe los mecanismos vasomotores periféricos (vasoconstricción/vasodilatación) frente a fluctuaciones térmicas en inmersión.' },
+      { authors: 'Sorgente et al.', year: '2023', topic: 'Protocolos de recuperación en nadadores jóvenes', summary: 'Examina ventanas de recuperación post-entrenamiento y variables perceptivas y fisiológicas en etapas formativas y competitivas.' },
+      { authors: 'Zhang et al.', year: '2022', topic: 'Inmersión en agua fría y respuestas del organismo', summary: 'Detalla las respuestas autonómicas, hemodinámicas y musculares asociadas a exposiciones a temperaturas bajas.' },
+      { authors: 'Choo et al.', year: '2022', topic: 'Inmersión en agua fría y recuperación física', summary: 'Analiza la modulación del flujo sanguíneo muscular y su relación con la evolución de molestias musculares post-ejercicio.' },
+      { authors: 'Craven et al.', year: '2021', topic: 'Recuperación del glucógeno muscular', summary: 'Examina los factores metabólicos y termogénicos que condicionan la tasa de resíntesis de glucógeno muscular tras ejercicio intenso.' }
+    ];
+
+    let state = {
+      activeScenario: 'moderada',
+      poolLength: '25m',
+      params: { ...PRESET_SCENARIOS.moderada.params }
+    };
+
+    function calculateMetrics(p) {
+      const effectiveMax = Math.max(p.tMax, p.tInitial, p.tDuring, p.tFinal);
+      const effectiveMin = Math.min(p.tMin, p.tInitial, p.tDuring, p.tFinal);
+
+      const thermalAmplitude = Number((effectiveMax - effectiveMin).toFixed(2));
+      const netThermalChange = Number((p.tFinal - p.tInitial).toFixed(2));
+      const ratePerMin = Number((netThermalChange / p.duration).toFixed(4));
+      const ratePerHour = Number((ratePerMin * 60).toFixed(2));
+
+      const meanSessionTemp = Number(((p.tInitial + p.tDuring + p.tFinal) / 3).toFixed(2));
+      const deviationFromNeutral = Number(Math.abs(meanSessionTemp - 27.0).toFixed(2));
+
+      const stabilityIndex = Math.max(
+        12,
+        Math.min(100, Math.round(100 - thermalAmplitude * 18 - Math.abs(netThermalChange) * 10 - deviationFromNeutral * 4))
+      );
+
+      const thermalStressPenalty = thermalAmplitude * 5.2 + deviationFromNeutral * 4.5 + Math.abs(ratePerHour) * 3.8;
+
+      const baseHrr1 = Math.max(12, Math.round(32 - thermalStressPenalty * 0.45 - (p.intensity - 5) * 1.5));
+      const hr1Min = Math.max(85, p.hrPost - baseHrr1);
+      const hr3Min = Math.max(72, hr1Min - Math.round(baseHrr1 * 0.65));
+      const hr5Min = Math.max(64, hr3Min - Math.round(baseHrr1 * 0.42));
+      const physiologicalScore = Math.max(18, Math.min(98, Math.round(94 - thermalStressPenalty * 0.95 - (p.hrPost - 145) * 0.35 + p.recoveryTime * 0.35)));
+
+      const muscularScore = Math.max(20, Math.min(97, Math.round(92 - thermalAmplitude * 6.5 - p.intensity * 2.4 + p.recoveryTime * 0.42)));
+      const estimatedDoms24h = Math.max(1.2, Math.min(9.5, Number((10 - muscularScore / 10.5).toFixed(1))));
+
+      const coldThermogenicCost = meanSessionTemp < 26.5 ? (26.5 - meanSessionTemp) * 7.5 : 0;
+      const energeticScore = Math.max(18, Math.min(96, Math.round(90 - coldThermogenicCost - thermalAmplitude * 4.2 - (p.duration / 30) * 3.1 + p.recoveryTime * 0.48)));
+      const glycogenReplenishmentRate = Number(Math.max(2.1, Math.min(6.8, (energeticScore / 100) * 6.5)).toFixed(1));
+
+      const perceptiveScore = Math.max(15, Math.min(98, Math.round(95 - p.rpe * 4.2 - thermalAmplitude * 5.8 - deviationFromNeutral * 3.5 + p.recoveryTime * 0.3)));
+
+      const overallRecoveryIndex = Math.round((physiologicalScore + muscularScore + energeticScore + perceptiveScore) / 4);
+
+      return {
+        effectiveMax, effectiveMin, thermalAmplitude, netThermalChange, ratePerMin, ratePerHour,
+        meanSessionTemp, deviationFromNeutral, stabilityIndex,
+        physiologicalScore, hr1Min, hr3Min, hr5Min, baseHrr1,
+        muscularScore, estimatedDoms24h,
+        energeticScore, glycogenReplenishmentRate,
+        perceptiveScore, overallRecoveryIndex
+      };
+    }
+
+    function getTempHex(t) {
+      if (t < 25.8) return '#0284C7';
+      if (t <= 26.7) return '#0EA5E9';
+      if (t <= 28.0) return '#0D9488';
+      return '#D97706';
+    }
+
+    function renderThermalChart(p, m) {
+      const svg = document.getElementById('thermal-chart-svg');
+      const width = 680, height = 240, padLeft = 52, padRight = 32, padTop = 24, padBottom = 38;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+      const minScale = 22.5, maxScale = 32.5;
+
+      const getY = (temp) => {
+        const clamped = Math.max(minScale, Math.min(maxScale, temp));
+        return padTop + ((maxScale - clamped) / (maxScale - minScale)) * plotH;
+      };
+
+      const points = [
+        { label: 'Inicio Sesión', time: 0, temp: p.tInitial, x: padLeft, y: getY(p.tInitial), color: '#38BDF8' },
+        { label: 'Mitad Entrenamiento', time: Math.round(p.duration / 2), temp: p.tDuring, x: padLeft + plotW * 0.5, y: getY(p.tDuring), color: '#10B981' },
+        { label: 'Cierre Sesión', time: p.duration, temp: p.tFinal, x: padLeft + plotW, y: getY(p.tFinal), color: '#F59E0B' }
+      ];
+
+      const yMaxBand = getY(m.effectiveMax);
+      const yMinBand = getY(m.effectiveMin);
+      const yNeutralTop = getY(28.0);
+      const yNeutralBottom = getY(26.5);
+
+      const linePath = `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y} L ${points[2].x} ${points[2].y}`;
+      const areaPath = `${linePath} L ${points[2].x} ${padTop + plotH} L ${points[0].x} ${padTop + plotH} Z`;
+
+      let gridHtml = '';
+      [24, 26, 27, 28, 30, 32].forEach(deg => {
+        const y = getY(deg);
+        gridHtml += `
+          <line x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}" stroke="#1E293B" stroke-width="1" />
+          <text x="${padLeft - 8}" y="${y + 3.5}" text-anchor="end" fill="#64748B" font-size="10" font-family="monospace">${deg}°</text>
+        `;
+      });
+
+      let nodesHtml = '';
+      points.forEach(pt => {
+        nodesHtml += `
+          <line x1="${pt.x}" y1="${padTop}" x2="${pt.x}" y2="${padTop + plotH}" stroke="${pt.color}" stroke-width="1" stroke-dasharray="3 3" stroke-opacity="0.3" />
+          <circle cx="${pt.x}" cy="${pt.y}" r="5.5" fill="#060D1A" stroke="${pt.color}" stroke-width="3" />
+          <text x="${pt.x}" y="${pt.y - 12}" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="bold" font-family="monospace">${pt.temp.toFixed(1)}°C</text>
+          <text x="${pt.x}" y="${padTop + plotH + 16}" text-anchor="middle" fill="#94A3B8" font-size="10">${pt.label}</text>
+          <text x="${pt.x}" y="${padTop + plotH + 29}" text-anchor="middle" fill="#64748B" font-size="9.5" font-family="monospace">(${pt.time} min)</text>
+        `;
+      });
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="tempCurveFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.28" />
+            <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.01" />
+          </linearGradient>
+        </defs>
+        ${gridHtml}
+        <rect x="${padLeft}" y="${yNeutralTop}" width="${plotW}" height="${Math.max(2, yNeutralBottom - yNeutralTop)}" fill="#10B981" fill-opacity="0.08" />
+        <rect x="${padLeft}" y="${yMaxBand}" width="${plotW}" height="${Math.max(2, yMinBand - yMaxBand)}" fill="#38BDF8" fill-opacity="0.11" stroke="#38BDF8" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.45" />
+        <text x="${width - padRight - 6}" y="${yMaxBand - 5}" text-anchor="end" fill="#7DD3FC" font-size="9.5" font-family="monospace">T_máx: ${m.effectiveMax.toFixed(1)}°C</text>
+        <text x="${width - padRight - 6}" y="${yMinBand + 12}" text-anchor="end" fill="#7DD3FC" font-size="9.5" font-family="monospace">T_mín: ${m.effectiveMin.toFixed(1)}°C</text>
+        <path d="${areaPath}" fill="url(#tempCurveFill)" />
+        <path d="${linePath}" fill="none" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        ${nodesHtml}
+      `;
+    }
+
+    function updateUI() {
+      const p = state.params;
+      const m = calculateMetrics(p);
+      const stableM = calculateMetrics(PRESET_SCENARIOS.estable.params);
+
+      document.getElementById('val-tInitial').textContent = `${p.tInitial.toFixed(1)} °C`;
+      document.getElementById('val-tDuring').textContent = `${p.tDuring.toFixed(1)} °C`;
+      document.getElementById('val-tFinal').textContent = `${p.tFinal.toFixed(1)} °C`;
+      document.getElementById('val-tMin').textContent = `${p.tMin.toFixed(1)} °C`;
+      document.getElementById('val-tMax').textContent = `${p.tMax.toFixed(1)} °C`;
+      document.getElementById('val-duration').textContent = `${p.duration} min`;
+      document.getElementById('val-recoveryTime').textContent = `${p.recoveryTime} min`;
+      document.getElementById('val-hrPost').textContent = `${p.hrPost} lpm`;
+      document.getElementById('val-rpe').textContent = `${p.rpe} /10`;
+      document.getElementById('val-intensity').textContent = `${p.intensity} /10`;
+
+      const badge = document.getElementById('thermal-badge');
+      const statClass = document.getElementById('stat-thermalClass');
+      if (m.meanSessionTemp < 25.8) {
+        badge.textContent = 'Agua Fría / Hipotérmica Relativa';
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border bg-sky-500/15 text-sky-300 border-sky-400/30';
+        statClass.textContent = 'Agua Fría Relativa';
+        statClass.className = 'text-xs font-semibold text-sky-300 truncate block mt-0.5';
+      } else if (m.meanSessionTemp <= 28.0) {
+        badge.textContent = 'Rango Termoneutro Acuático';
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border bg-emerald-500/15 text-emerald-300 border-emerald-400/30';
+        statClass.textContent = 'Rango Termoneutro';
+        statClass.className = 'text-xs font-semibold text-emerald-300 truncate block mt-0.5';
+      } else {
+        badge.textContent = 'Agua Cálida / Carga Térmica Elevada';
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border bg-amber-500/15 text-amber-300 border-amber-400/30';
+        statClass.textContent = 'Carga Térmica Alta';
+        statClass.className = 'text-xs font-semibold text-amber-300 truncate block mt-0.5';
+      }
+
+      if (state.activeScenario !== 'personalizado') {
+        document.getElementById('scenario-title').textContent = PRESET_SCENARIOS[state.activeScenario].name;
+        document.getElementById('scenario-desc').textContent = PRESET_SCENARIOS[state.activeScenario].description;
+        document.getElementById('custom-badge').classList.add('hidden');
+      } else {
+        document.getElementById('scenario-title').textContent = 'Configuración Personalizada';
+        document.getElementById('scenario-desc').textContent = 'Parámetros ajustados manualmente por el investigador para evaluar sensibilidad termorreguladora y recuperación.';
+        document.getElementById('custom-badge').classList.remove('hidden');
+      }
+
+      document.getElementById('grad-stop-1').setAttribute('stop-color', getTempHex(p.tInitial));
+      document.getElementById('grad-stop-2').setAttribute('stop-color', getTempHex(p.tDuring));
+      document.getElementById('grad-stop-3').setAttribute('stop-color', getTempHex(p.tFinal));
+      document.getElementById('svg-tInitial').textContent = `${p.tInitial.toFixed(1)} °C`;
+      document.getElementById('svg-tDuring').textContent = `${p.tDuring.toFixed(1)} °C`;
+      document.getElementById('svg-tDuring-min').textContent = `t = ${Math.round(p.duration / 2)} min`;
+      document.getElementById('svg-tFinal').textContent = `${p.tFinal.toFixed(1)} °C`;
+      document.getElementById('svg-tFinal-min').textContent = `t = ${p.duration} min`;
+
+      document.getElementById('stat-meanTemp').textContent = `${m.meanSessionTemp.toFixed(2)} °C`;
+      document.getElementById('stat-rangeTemp').textContent = `${m.effectiveMin.toFixed(1)} – ${m.effectiveMax.toFixed(1)} °C`;
+      document.getElementById('stat-devNeutral').textContent = `±${m.deviationFromNeutral.toFixed(2)} °C`;
+
+      renderThermalChart(p, m);
+      document.getElementById('legend-amp').textContent = m.thermalAmplitude.toFixed(2);
+      document.getElementById('formula-amp-val').textContent = `${m.thermalAmplitude.toFixed(2)} °C`;
+      document.getElementById('formula-amp-eq').textContent = `T_máx − T_mín = ${m.effectiveMax.toFixed(1)} − ${m.effectiveMin.toFixed(1)}`;
+
+      const netSign = m.netThermalChange > 0 ? `+${m.netThermalChange.toFixed(2)}` : m.netThermalChange.toFixed(2);
+      document.getElementById('formula-net-val').textContent = `${netSign} °C`;
+      document.getElementById('formula-net-eq').textContent = `T_final − T_inicial = ${p.tFinal.toFixed(1)} − ${p.tInitial.toFixed(1)}`;
+
+      const rateSign = m.ratePerHour > 0 ? `+${m.ratePerHour.toFixed(2)}` : m.ratePerHour.toFixed(2);
+      document.getElementById('formula-rate-val').textContent = `${rateSign} °C/h`;
+      document.getElementById('formula-rate-eq').textContent = `ΔT / Δt = ${m.netThermalChange.toFixed(2)}°C / ${p.duration}m (${m.ratePerMin.toFixed(4)} °C/min)`;
+
+      document.getElementById('formula-stab-val').textContent = `${m.stabilityIndex}%`;
+      const stabBar = document.getElementById('formula-stab-bar');
+      stabBar.style.width = `${m.stabilityIndex}%`;
+      stabBar.className = `h-full rounded-full transition-all duration-300 ${m.stabilityIndex >= 75 ? 'bg-emerald-400' : m.stabilityIndex >= 50 ? 'bg-amber-400' : 'bg-rose-400'}`;
+
+      document.getElementById('overall-recovery-score').textContent = `${m.overallRecoveryIndex} / 100`;
+
+      document.getElementById('score-phys').textContent = `${m.physiologicalScore}%`;
+      document.getElementById('bar-phys').style.width = `${m.physiologicalScore}%`;
+      document.getElementById('hr-post-disp').textContent = p.hrPost;
+      document.getElementById('hr-1m-disp').textContent = m.hr1Min;
+      document.getElementById('hr-3m-disp').textContent = m.hr3Min;
+      document.getElementById('hr-5m-disp').textContent = m.hr5Min;
+      document.getElementById('hrr-1m-text').textContent = `-${m.baseHrr1} lpm`;
+
+      document.getElementById('score-musc').textContent = `${m.muscularScore}%`;
+      document.getElementById('bar-musc').style.width = `${m.muscularScore}%`;
+      document.getElementById('doms-disp').textContent = `${m.estimatedDoms24h} / 10 pts`;
+      document.getElementById('rec-window-disp').textContent = `${p.recoveryTime} min`;
+      document.getElementById('musc-amp-text').textContent = `${m.thermalAmplitude.toFixed(1)} °C`;
+
+      document.getElementById('score-ener').textContent = `${m.energeticScore}%`;
+      document.getElementById('bar-ener').style.width = `${m.energeticScore}%`;
+      document.getElementById('glycogen-disp').textContent = `~${m.glycogenReplenishmentRate} mmol/kg/h`;
+      document.getElementById('exposure-disp').textContent = `${p.duration} min (${p.intensity}/10 int.)`;
+
+      document.getElementById('score-perc').textContent = `${m.perceptiveScore}%`;
+      document.getElementById('bar-perc').style.width = `${m.perceptiveScore}%`;
+      document.getElementById('rpe-disp').textContent = `${p.rpe} / 10 (Borg CR10)`;
+      document.getElementById('readiness-disp').textContent = m.perceptiveScore >= 75 ? 'Alta' : m.perceptiveScore >= 50 ? 'Moderada' : 'Reducida';
+
+      const rows = [
+        { label: 'Amplitud Térmica (T_máx - T_mín)', st: `${stableM.thermalAmplitude.toFixed(2)} °C`, cur: `${m.thermalAmplitude.toFixed(2)} °C`, diff: `${(m.thermalAmplitude - stableM.thermalAmplitude) >= 0 ? '+' : ''}${(m.thermalAmplitude - stableM.thermalAmplitude).toFixed(2)} °C` },
+        { label: 'Índice de Estabilidad Térmica', st: `${stableM.stabilityIndex}%`, cur: `${m.stabilityIndex}%`, diff: `${m.stabilityIndex - stableM.stabilityIndex}%` },
+        { label: 'Dimensión 1: Recuperación Fisiológica', st: `${stableM.physiologicalScore}%`, cur: `${m.physiologicalScore}%`, diff: `${m.physiologicalScore - stableM.physiologicalScore}%` },
+        { label: 'Dimensión 2: Recuperación Muscular', st: `${stableM.muscularScore}%`, cur: `${m.muscularScore}%`, diff: `${m.muscularScore - stableM.muscularScore}%` },
+        { label: 'Dimensión 3: Recuperación Energética', st: `${stableM.energeticScore}%`, cur: `${m.energeticScore}%`, diff: `${m.energeticScore - stableM.energeticScore}%` },
+        { label: 'Dimensión 4: Recuperación Perceptiva', st: `${stableM.perceptiveScore}%`, cur: `${m.perceptiveScore}%`, diff: `${m.perceptiveScore - stableM.perceptiveScore}%` }
+      ];
+      document.getElementById('comparison-tbody').innerHTML = rows.map(r => `
+        <tr>
+          <td class="py-3 px-3 font-medium text-white">${r.label}</td>
+          <td class="py-3 px-3 font-mono-num text-emerald-300">${r.st}</td>
+          <td class="py-3 px-3 font-mono-num text-white">${r.cur}</td>
+          <td class="py-3 px-3 font-mono-num text-right text-amber-300">${r.diff}</td>
+        </tr>
+      `).join('');
+
+      const dims = [
+        { name: 'Fisiológica', val: m.physiologicalScore },
+        { name: 'Muscular', val: m.muscularScore },
+        { name: 'Energética', val: m.energeticScore },
+        { name: 'Perceptiva', val: m.perceptiveScore }
+      ].sort((a, b) => a.val - b.val);
+
+      document.getElementById('synthesis-text').innerHTML = `
+        Bajo los parámetros actuales, la piscina registra una <strong class="text-white">amplitud térmica de ${m.thermalAmplitude.toFixed(2)} °C</strong> y una velocidad de cambio de <strong class="text-white">${m.ratePerHour.toFixed(2)} °C/h</strong> (estabilidad térmica del <strong class="text-sky-300">${m.stabilityIndex}%</strong>). En el modelo teórico asociado, estas condiciones se vinculan con un índice global de capacidad de recuperación estimada de <strong class="text-emerald-300">${m.overallRecoveryIndex}/100</strong>, observándose mayor sensibilidad en la dimensión <strong class="text-white">${dims[0].name}</strong> tras ${p.duration} minutos de exposición acuática a intensidad ${p.intensity}/10.
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('references-grid').innerHTML = SCIENTIFIC_REFERENCES.map(ref => `
+        <div class="bg-[#060D1A] border border-slate-800/90 rounded-xl p-3.5 hover:border-sky-500/40 transition-all">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="text-xs font-bold text-sky-300">${ref.authors} (${ref.year})</span>
+            <span class="text-[10px] font-mono-num px-2 py-0.5 rounded bg-slate-800 text-slate-300">Ref. Verificada</span>
+          </div>
+          <h4 class="text-xs font-semibold text-white mb-1">${ref.topic}</h4>
+          <p class="text-[11px] text-slate-400 leading-relaxed">${ref.summary}</p>
+        </div>
+      `).join('');
+
+      const sliderKeys = ['tInitial', 'tDuring', 'tFinal', 'tMin', 'tMax', 'duration', 'recoveryTime', 'hrPost', 'rpe', 'intensity'];
+      sliderKeys.forEach(key => {
+        const el = document.getElementById(`input-${key}`);
+        el.addEventListener('input', (e) => {
+          const val = parseFloat(e.target.value);
+          state.activeScenario = 'personalizado';
+          state.params[key] = val;
+          if (key === 'tMin' && val > state.params.tMax) {
+            state.params.tMax = val;
+            document.getElementById('input-tMax').value = val;
+          }
+          if (key === 'tMax' && val < state.params.tMin) {
+            state.params.tMin = val;
+            document.getElementById('input-tMin').value = val;
+          }
+          document.querySelectorAll('.scenario-btn').forEach(b => {
+            b.className = 'scenario-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/70';
+          });
+          updateUI();
+        });
+      });
+
+      document.querySelectorAll('.scenario-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const scKey = btn.dataset.scenario;
+          state.activeScenario = scKey;
+          state.params = { ...PRESET_SCENARIOS[scKey].params };
+          sliderKeys.forEach(k => {
+            document.getElementById(`input-${k}`).value = state.params[k];
+          });
+          document.querySelectorAll('.scenario-btn').forEach(b => {
+            b.className = 'scenario-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/70';
+          });
+          btn.className = 'scenario-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-sky-500 text-slate-950 shadow-sm';
+          updateUI();
+        });
+      });
+
+      document.querySelectorAll('.pool-len-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.poolLength = btn.dataset.pool;
+          document.getElementById('pool-length-label').textContent = state.poolLength;
+          document.getElementById('svg-mid-dist').textContent = state.poolLength === '25m' ? '12.5m' : '25.0m';
+          document.getElementById('svg-end-dist').textContent = `${state.poolLength} (Viraje)`;
+          document.querySelectorAll('.pool-len-btn').forEach(b => {
+            b.className = 'pool-len-btn px-2.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-white';
+          });
+          btn.className = 'pool-len-btn px-2.5 py-1 text-xs font-semibold rounded-md bg-sky-500 text-slate-950 shadow';
+        });
+      });
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.tab;
+          ['simulacion', 'comparativa', 'evidencia'].forEach(v => {
+            document.getElementById(`view-${v}`).classList.toggle('hidden', v !== target);
+          });
+          document.querySelectorAll('.tab-btn').forEach(b => {
+            b.className = 'tab-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white';
+          });
+          btn.className = 'tab-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all bg-sky-500 text-slate-950 shadow';
+        });
+      });
+
+      lucide.createIcons();
+      updateUI();
+    });
+  </script>
+</body>
+</html>

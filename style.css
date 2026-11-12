@@ -1,0 +1,74 @@
+:root {
+  --bg-abyss: #060D1A;
+  --bg-navy: #0B162C;
+  --bg-panel: #0F1E3A;
+  --accent-sky: #38BDF8;
+  --accent-emerald: #10B981;
+  --accent-amber: #F59E0B;
+  --accent-rose: #FB7185;
+  --border-subtle: #1E293B;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-abyss);
+  color: #F1F5F9;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.font-mono-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="range"].aqua-slider {
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #1E293B;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].aqua-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #F8FAFC;
+  border: 3px solid var(--accent-sky);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+  cursor: pointer;
+}
+
+input[type="range"].aqua-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #F8FAFC;
+  border: 3px solid var(--accent-sky);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+  cursor: pointer;
+}
+
+@keyframes pulseRing {
+  0% {
+    opacity: 0.85;
+    stroke-width: 2;
+  }
+  100% {
+    opacity: 0;
+    stroke-width: 6;
+  }
+}
+
+.sensor-pulse {
+  animation: pulseRing 2.4s ease-out infinite;
+}
